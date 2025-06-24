@@ -15,9 +15,9 @@ var DB *gorm.DB
 
 func ConnectToDatabase() (*gorm.DB, error) {
 	mode := os.Getenv("APP_ENV")
-	if  mode == "" || mode == "DEV" {
+	if  mode == "DEV" {
 		cwd, _ := os.Getwd()
-		envPath := filepath.Join(cwd, "config", ".env") //  always search for ./config/.env
+		envPath := filepath.Join(cwd, "config", ".env") 
 		fmt.Println(envPath)
 		err := godotenv.Load(envPath)
 		if err != nil {
