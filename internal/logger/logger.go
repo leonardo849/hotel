@@ -10,7 +10,7 @@ var ZapLogger *zap.Logger
 func StartLogger() (error) {
 	mode := os.Getenv("APP_ENV")
 	var err error
-	if mode == "DEV" {
+	if mode == "" || mode == "DEV" {
 		ZapLogger, err = zap.NewDevelopment()
 		if err != nil {
 			return err

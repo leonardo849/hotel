@@ -5,8 +5,6 @@ import (
 	"hotel/internal/model"
 	"log"
 	"os"
-	"path/filepath"
-	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -14,16 +12,6 @@ import (
 var DB *gorm.DB
 
 func ConnectToDatabase() (*gorm.DB, error) {
-	mode := os.Getenv("APP_ENV")
-	if  mode == "DEV" {
-		cwd, _ := os.Getwd()
-		envPath := filepath.Join(cwd, "config", ".env") 
-		fmt.Println(envPath)
-		err := godotenv.Load(envPath)
-		if err != nil {
-			return  nil, err
-		}
-	}
 	dsn := os.Getenv("DATABASE_URL")
 	if dsn == "" {
 		return nil, fmt.Errorf("there isn't dsn")
