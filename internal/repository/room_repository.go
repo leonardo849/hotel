@@ -16,7 +16,7 @@ func NewRoomRepository(roomModel *gorm.DB) *RoomRepository {
 	}
 }
 
-func (r * RoomRepository) CreateRoom(input dto.CreateRoomDTO) error {
+func (r *RoomRepository) CreateRoom(input dto.CreateRoomDTO) error {
 	room := model.Room{
 		Number: input.Number,
 		Type: input.Type,
@@ -25,3 +25,13 @@ func (r * RoomRepository) CreateRoom(input dto.CreateRoomDTO) error {
 	return r.roomModel.Create(&room).Error
 }
 
+func (r *RoomRepository) FindAllRooms() ([]model.Room, error) {
+	var rooms []model.Room
+
+	if err := r.roomModel.Find(&rooms).Error; err != nil {
+		return  nil, err
+	}
+
+
+	return rooms, nil  
+}

@@ -3,6 +3,7 @@ package service
 import (
 	"hotel/internal/dto"
 	"hotel/internal/logger"
+	"hotel/internal/model"
 	"hotel/internal/repository"
 	"hotel/internal/validator"
 	"math"
@@ -32,9 +33,28 @@ func (r * RoomService) CreateRoom(input dto.CreateRoomDTO) (status int, message 
 	input.PricePerNight = math.Round(input.PricePerNight * 100) / 100
 
 	if err := r.roomRepository.CreateRoom(input); err != nil {
+		logger.ZapLogger.Error(
+			"internal error CreateRoom",
+			zap.Error(err),
+			zap.String("function", "CreateRoom"),
+		)
 		return 500, err.Error()
 	}
 
 	return 201, "room was created!"
 	
+}
+
+func (r *RoomService) FindAllRooms() (status int, message interface{}) {
+	var rooms []model.Room
+	var err error
+	if rooms,err = r.roomRepository.FindAllRooms(); err != nil {
+		logger.ZapLogger.Error(
+			"internal error FindAllRooms",
+			zap.Error(err),
+			zap.String("function", "FindAllRooms"),
+		)
+		return 500, err.Error()
+	}
+	return 200, rooms
 }

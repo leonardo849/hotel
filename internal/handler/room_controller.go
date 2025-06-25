@@ -2,6 +2,7 @@ package handler
 
 import (
 	"hotel/internal/dto"
+	"hotel/internal/helper"
 	"hotel/internal/service"
 
 	"github.com/gofiber/fiber/v2"
@@ -24,10 +25,18 @@ func (r *RoomController) CreateRoom() fiber.Handler {
 			return ctx.Status(400).JSON(fiber.Map{"error": err.Error()})
 		}
 		status, message := r.roomService.CreateRoom(input)
-		property := "message"
-		if status >= 400 {
-			property = "error"
-		}
+		var property string
+		helper.SetProperty(&property, status)
 		return  ctx.Status(status).JSON(fiber.Map{property: message})
+	}
+}
+
+func (r *RoomController) FindAllRooms() fiber.Handler {
+	return  func(ctx *fiber.Ctx) error {
+		status, message := r.roomService.FindAllRooms()
+		if status >= 400 {
+			return  ctx.Status(status).JSON(fiber.Map{"error": message})
+		}
+		return  ctx.Status(status).JSON(message)
 	}
 }
