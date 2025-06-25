@@ -6,3 +6,10 @@ type CreateRoomDTO struct {
 	Type string `json:"type" validate:"required,typeofroom"`
 	PricePerNight float64   `json:"price_per_night" validate:"required,gt=0,number"`
 }
+
+type FindRoomDTO struct {
+	Number uint `json:"number"`
+	Type string `json:"type" `
+	PricePerNight float64   `json:"price_per_night"`
+	Reservations []FindReservationDTO `json:"reservations"`
+}

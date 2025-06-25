@@ -1,0 +1,134 @@
+definitions:
+  dto.CreateRoomDTO:
+    properties:
+      number:
+        type: integer
+      price_per_night:
+        type: number
+      type:
+        type: string
+    required:
+    - number
+    - price_per_night
+    - type
+    type: object
+  handler.errorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  handler.messageResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  model.Guest:
+    properties:
+      createdAt:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
+      reservations:
+        items:
+          $ref: '#/definitions/model.Reservation'
+        type: array
+      updatedAt:
+        type: string
+    type: object
+  model.Reservation:
+    properties:
+      check_in:
+        type: string
+      check_out:
+        type: string
+      createdAt:
+        type: string
+      guest:
+        $ref: '#/definitions/model.Guest'
+      guest_id:
+        type: string
+      id:
+        type: string
+      room:
+        $ref: '#/definitions/model.Room'
+      room_id:
+        type: string
+      total_price:
+        type: number
+      updatedAt:
+        type: string
+    type: object
+  model.Room:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: string
+      number:
+        type: integer
+      price_per_night:
+        type: number
+      reservations:
+        items:
+          $ref: '#/definitions/model.Reservation'
+        type: array
+      type:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /rooms/all:
+    get:
+      consumes:
+      - application/json
+      description: find all rooms
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Room'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      tags:
+      - rooms
+  /rooms/create:
+    post:
+      consumes:
+      - application/json
+      description: Create a new hotel room
+      parameters:
+      - description: Room data
+        in: body
+        name: room
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateRoomDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handler.messageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      tags:
+      - rooms
+swagger: "2.0"

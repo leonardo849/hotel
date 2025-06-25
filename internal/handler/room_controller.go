@@ -8,6 +8,13 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+type messageResponse struct {
+    Message string `json:"message"`
+}
+
+type errorResponse struct {
+	Error string `json:"error"`
+}
 type RoomController struct {
 	roomService *service.RoomService
 }
@@ -18,6 +25,15 @@ func NewRoomController(roomService *service.RoomService) *RoomController {
 	}
 }
 
+// CreateRoom godoc
+// @Description Create a new hotel room
+// @Tags rooms
+// @Accept json
+// @Produce json
+// @Param room body dto.CreateRoomDTO true "Room data"
+// @Success 201 {object} messageResponse
+// @Failure 400 {object} errorResponse
+// @Router /rooms/create [post]
 func (r *RoomController) CreateRoom() fiber.Handler {
 	return func(ctx *fiber.Ctx) error {
 		var input dto.CreateRoomDTO
@@ -31,6 +47,15 @@ func (r *RoomController) CreateRoom() fiber.Handler {
 	}
 }
 
+
+// FindAllRooms godoc
+// @Description find all rooms
+// @Tags rooms
+// @Accept json
+// @Produce json
+// @Success 200 {array} model.Room
+// @Failure 400 {object} errorResponse
+// @Router /rooms/all [get]
 func (r *RoomController) FindAllRooms() fiber.Handler {
 	return  func(ctx *fiber.Ctx) error {
 		status, message := r.roomService.FindAllRooms()

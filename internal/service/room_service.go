@@ -3,7 +3,6 @@ package service
 import (
 	"hotel/internal/dto"
 	"hotel/internal/logger"
-	"hotel/internal/model"
 	"hotel/internal/repository"
 	"hotel/internal/validator"
 	"math"
@@ -46,7 +45,7 @@ func (r * RoomService) CreateRoom(input dto.CreateRoomDTO) (status int, message 
 }
 
 func (r *RoomService) FindAllRooms() (status int, message interface{}) {
-	var rooms []model.Room
+	var rooms []dto.FindRoomDTO
 	var err error
 	if rooms,err = r.roomRepository.FindAllRooms(); err != nil {
 		logger.ZapLogger.Error(
