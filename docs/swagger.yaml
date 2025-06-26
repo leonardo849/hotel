@@ -1,4 +1,19 @@
 definitions:
+  dto.CreateGuestDTO:
+    properties:
+      email:
+        type: string
+      name:
+        maxLength: 200
+        minLength: 10
+        type: string
+      phone:
+        type: string
+    required:
+    - email
+    - name
+    - phone
+    type: object
   dto.CreateRoomDTO:
     properties:
       number:
@@ -24,6 +39,25 @@ definitions:
         type: string
       phone:
         type: string
+      reservations:
+        items:
+          $ref: '#/definitions/dto.FindReservationDTO'
+        type: array
+      updatedAt:
+        type: string
+    type: object
+  dto.FindGuestInReservationDTO:
+    properties:
+      createdAt:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
       updatedAt:
         type: string
     type: object
@@ -34,7 +68,7 @@ definitions:
       check_out:
         type: string
       guest:
-        $ref: '#/definitions/dto.FindGuestDTO'
+        $ref: '#/definitions/dto.FindGuestInReservationDTO'
       guest_id:
         type: string
       id:
@@ -72,6 +106,51 @@ definitions:
 info:
   contact: {}
 paths:
+  /guest/all:
+    get:
+      consumes:
+      - application/json
+      description: Find all guests
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.FindGuestDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      tags:
+      - guests
+  /guest/create:
+    post:
+      consumes:
+      - application/json
+      description: Create a new guest
+      parameters:
+      - description: Guest data
+        in: body
+        name: guest
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateGuestDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handler.messageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      tags:
+      - guests
   /room/{id}:
     get:
       consumes:

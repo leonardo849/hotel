@@ -16,21 +16,21 @@ type RoomService struct {
 }
 
 func NewRoomService(roomRepository *repository.RoomRepository) *RoomService {
-	return  &RoomService{
+	return &RoomService{
 		roomRepository: roomRepository,
 	}
 }
 
-func (r * RoomService) CreateRoom(input dto.CreateRoomDTO) (status int, message string) {
+func (r *RoomService) CreateRoom(input dto.CreateRoomDTO) (status int, message string) {
 	if err := validator.Validate.Struct(input); err != nil {
 		logger.ZapLogger.Error(
 			"validation error in create room using CreateRoomDTO",
 			zap.Error(err),
 			zap.String("function", "CreateRoom"),
 		)
-		return 400, err.Error()	
+		return 400, err.Error()
 	}
-	input.PricePerNight = math.Round(input.PricePerNight * 100) / 100
+	input.PricePerNight = math.Round(input.PricePerNight*100) / 100
 
 	if err := r.roomRepository.CreateRoom(input); err != nil {
 		logger.ZapLogger.Error(
@@ -42,13 +42,13 @@ func (r * RoomService) CreateRoom(input dto.CreateRoomDTO) (status int, message 
 	}
 
 	return 201, "room was created!"
-	
+
 }
 
 func (r *RoomService) FindAllRooms() (status int, message interface{}) {
 	var rooms []dto.FindRoomDTO
 	var err error
-	if rooms,err = r.roomRepository.FindAllRooms(); err != nil {
+	if rooms, err = r.roomRepository.FindAllRooms(); err != nil {
 		logger.ZapLogger.Error(
 			"internal error FindAllRooms",
 			zap.Error(err),
@@ -59,7 +59,7 @@ func (r *RoomService) FindAllRooms() (status int, message interface{}) {
 	return 200, rooms
 }
 
-func (r *RoomService) FindOneRoom(id string)  (status int, message interface{}) {
+func (r *RoomService) FindOneRoom(id string) (status int, message interface{}) {
 	var room *dto.FindRoomDTO
 	_, err := uuid.Parse(id)
 	if err != nil {

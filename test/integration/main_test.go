@@ -24,9 +24,7 @@ type fiberRoundTripper struct {
 	app *fiber.App
 }
 
-var client = &http.Client{
-	Transport: fiberRoundTripper{app: app},
-}
+
 
 
 

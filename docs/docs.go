@@ -15,6 +15,76 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/guest/all": {
+            "get": {
+                "description": "Find all guests",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "guests"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.FindGuestDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/guest/create": {
+            "post": {
+                "description": "Create a new guest",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "guests"
+                ],
+                "parameters": [
+                    {
+                        "description": "Guest data",
+                        "name": "guest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateGuestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/handler.messageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/room/all": {
             "get": {
                 "description": "find all rooms",
@@ -219,6 +289,27 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "dto.CreateGuestDTO": {
+            "type": "object",
+            "required": [
+                "email",
+                "name",
+                "phone"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 200,
+                    "minLength": 10
+                },
+                "phone": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.CreateRoomDTO": {
             "type": "object",
             "required": [
@@ -256,6 +347,35 @@ const docTemplate = `{
                 "phone": {
                     "type": "string"
                 },
+                "reservations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.FindReservationDTO"
+                    }
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.FindGuestInReservationDTO": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
                 "updatedAt": {
                     "type": "string"
                 }
@@ -271,7 +391,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "guest": {
-                    "$ref": "#/definitions/dto.FindGuestDTO"
+                    "$ref": "#/definitions/dto.FindGuestInReservationDTO"
                 },
                 "guest_id": {
                     "type": "string"

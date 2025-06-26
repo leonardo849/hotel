@@ -3,9 +3,11 @@ package handler
 import (
 	"hotel/internal/dto"
 	"hotel/internal/helper"
+	"hotel/internal/logger"
 	"hotel/internal/service"
 
 	"github.com/gofiber/fiber/v2"
+	"go.uber.org/zap"
 )
 
 type messageResponse struct {
@@ -38,6 +40,11 @@ func (r *RoomController) CreateRoom() fiber.Handler {
 	return func(ctx *fiber.Ctx) error {
 		var input dto.CreateRoomDTO
 		if err := ctx.BodyParser(&input); err != nil {
+			logger.ZapLogger.Error(
+				"error body parser create room",
+				zap.Error(err),
+				zap.String("function", "create room controller"),
+			)
 			return ctx.Status(400).JSON(fiber.Map{"error": err.Error()})
 		}
 		status, message := r.roomService.CreateRoom(input)
@@ -105,6 +112,11 @@ func (r *RoomController) UpdateRoom() fiber.Handler {
 		id := ctx.Params("id")
 		var input dto.UpdateRoomDTO
 		if err := ctx.BodyParser(&input); err != nil {
+			logger.ZapLogger.Error(
+				"error body parser update room",
+				zap.Error(err),
+				zap.String("function", "update room controller"),
+			)
 			return  ctx.Status(400).JSON(fiber.Map{"error": err.Error()})
 		}
 		status, message := r.roomService.UpdateRoom(id, input)

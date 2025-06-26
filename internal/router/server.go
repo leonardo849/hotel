@@ -19,7 +19,9 @@ func SetupApp() *fiber.App {
 	app.Get("/swagger/*", swagger.HandlerDefault)
 	app.Use(middleware.LogRequestsMiddleware())
 	roomGroup := app.Group("/room")
+	guestGroup := app.Group("/guest")
 	setupRoomRoutes(roomGroup)
+	setupGuestRoutes(guestGroup)
 	logger.ZapLogger.Info("app is ready!")
 	return app
 }
