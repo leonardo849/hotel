@@ -7,6 +7,7 @@ import (
 	"hotel/internal/validator"
 	"math"
 
+	"github.com/google/uuid"
 	"go.uber.org/zap"
 )
 
@@ -56,4 +57,60 @@ func (r *RoomService) FindAllRooms() (status int, message interface{}) {
 		return 500, err.Error()
 	}
 	return 200, rooms
+}
+
+func (r *RoomService) FindOneRoom(id string)  (status int, message interface{}) {
+	var room *dto.FindRoomDTO
+	_, err := uuid.Parse(id)
+	if err != nil {
+		logger.ZapLogger.Error(
+			"bad request uuid is invalid",
+			zap.Error(err),
+			zap.String("function", "findOneRoom"),
+		)
+		return 400, "uuid is invalid"
+	}
+	if room, err = r.roomRepository.FindOneRoom(id); err != nil {
+		logger.ZapLogger.Error(
+			"room was not found",
+			zap.Error(err),
+			zap.String("function", "findOneRoom"),
+		)
+		return 404, "room wasn't found"
+	}
+	return 200, &room
+}
+
+func (r *RoomService) UpdateRoom(id string, input dto.UpdateRoomDTO) (status int, message interface{}) {
+	_, err := uuid.Parse(id)
+	if err != nil {
+		logger.ZapLogger.Error(
+			"bad request uuid is invalid",
+			zap.Error(err),
+			zap.String("function", "findOneRoom"),
+		)
+		return 400, "uuid is invalid"
+	}
+	status, res := r.FindOneRoom(id)
+	if status >= 400 {
+		return status, res
+	}
+	return 200, "room was updated"
+}
+
+func (r *RoomService) DeleteRoom(id string) (status int, message interface{}) {
+	_, err := uuid.Parse(id)
+	if err != nil {
+		logger.ZapLogger.Error(
+			"bad request uuid is invalid",
+			zap.Error(err),
+			zap.String("function", "findOneRoom"),
+		)
+		return 400, "uuid is invalid"
+	}
+	status, res := r.FindOneRoom(id)
+	if status >= 400 {
+		return status, res
+	}
+	return 200, "room was deleted"
 }

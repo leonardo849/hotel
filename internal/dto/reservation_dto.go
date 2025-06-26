@@ -7,6 +7,8 @@ import (
 )
 
 type FindReservationDTO struct {
+	ID uuid.UUID `json:"id"`
+	Room uuid.UUID `json:"room_id"`
 	GuestID    uuid.UUID    `json:"guest_id"`
 	Guest      *FindGuestDTO `json:"guest"`
 	CheckIn    time.Time    `json:"check_in"`

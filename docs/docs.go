@@ -15,7 +15,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/rooms/all": {
+        "/room/all": {
             "get": {
                 "description": "find all rooms",
                 "consumes": [
@@ -33,7 +33,10 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/model.Room"
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/dto.FindRoomDTO"
+                                }
                             }
                         }
                     },
@@ -46,7 +49,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/rooms/create": {
+        "/room/create": {
             "post": {
                 "description": "Create a new hotel room",
                 "consumes": [
@@ -84,6 +87,135 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/room/delete/{id}": {
+            "delete": {
+                "description": "delete room by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "rooms"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "room id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.messageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/room/update/{id}": {
+            "put": {
+                "description": "update room by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "rooms"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "room id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.messageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/room/{id}": {
+            "get": {
+                "description": "find one room by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "rooms"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "room id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.FindRoomDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -106,23 +238,7 @@ const docTemplate = `{
                 }
             }
         },
-        "handler.errorResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "type": "string"
-                }
-            }
-        },
-        "handler.messageResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.Guest": {
+        "dto.FindGuestDTO": {
             "type": "object",
             "properties": {
                 "createdAt": {
@@ -140,18 +256,12 @@ const docTemplate = `{
                 "phone": {
                     "type": "string"
                 },
-                "reservations": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.Reservation"
-                    }
-                },
                 "updatedAt": {
                     "type": "string"
                 }
             }
         },
-        "model.Reservation": {
+        "dto.FindReservationDTO": {
             "type": "object",
             "properties": {
                 "check_in": {
@@ -160,11 +270,8 @@ const docTemplate = `{
                 "check_out": {
                     "type": "string"
                 },
-                "createdAt": {
-                    "type": "string"
-                },
                 "guest": {
-                    "$ref": "#/definitions/model.Guest"
+                    "$ref": "#/definitions/dto.FindGuestDTO"
                 },
                 "guest_id": {
                     "type": "string"
@@ -172,26 +279,17 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
-                "room": {
-                    "$ref": "#/definitions/model.Room"
-                },
                 "room_id": {
                     "type": "string"
                 },
                 "total_price": {
                     "type": "number"
-                },
-                "updatedAt": {
-                    "type": "string"
                 }
             }
         },
-        "model.Room": {
+        "dto.FindRoomDTO": {
             "type": "object",
             "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "string"
                 },
@@ -204,13 +302,26 @@ const docTemplate = `{
                 "reservations": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/model.Reservation"
+                        "$ref": "#/definitions/dto.FindReservationDTO"
                     }
                 },
                 "type": {
                     "type": "string"
-                },
-                "updatedAt": {
+                }
+            }
+        },
+        "handler.errorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "handler.messageResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
                     "type": "string"
                 }
             }

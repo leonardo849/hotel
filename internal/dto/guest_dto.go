@@ -1,15 +1,16 @@
 package dto
 
 import (
-	"hotel/internal/model"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type FindGuestDTO struct {
+	ID uuid.UUID `json:"id"`
 	Name      string    `json:"name"`
 	Email     string    `json:"email"`
 	Phone     string    `json:"phone"`
-	Reservations *[]model.Reservation `json:"reservations"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 }

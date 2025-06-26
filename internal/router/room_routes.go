@@ -16,6 +16,9 @@ func setupRoomRoutes(roomRoutes fiber.Router) {
 	roomController := handler.NewRoomController(roomService)
 	roomRoutes.Post("/create", roomController.CreateRoom())
 	roomRoutes.Get("/all", roomController.FindAllRooms())
+	roomRoutes.Get("/one/:id", roomController.FindOneRoom())
+	roomRoutes.Put("/update/:id", roomController.UpdateRoom())
+	roomRoutes.Delete("/delete/:id", roomController.DeleteRoom())
 	logger.ZapLogger.Info("room's routes are working!")
 	
 }
