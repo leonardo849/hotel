@@ -5,7 +5,6 @@ import (
 	"hotel/internal/model"
 
 	"github.com/thoas/go-funk"
-	"gorm.io/gorm"
 )
 
 
@@ -18,7 +17,7 @@ type GuestRepository struct {
 	
 }
 
-func NewGuestRepository(guestModel *gorm.DB) *GuestRepository {
+func NewGuestRepository() *GuestRepository {
 	return &GuestRepository{
 		
 	}
@@ -118,4 +117,20 @@ func (g *GuestRepository) UpdateGuest(id string, input dto.UpdateGuestDTO) *Retu
 		}
 	}
 	return nil
+}
+func (g *GuestRepository) DeleteGuest(id string) *ReturnError {
+	_, err := g.FindOneGuest(id)
+	if err != nil {
+		return &ReturnError{
+			Code: 404,
+			Error: err,
+		}
+	}
+	if err := DB.Delete(&model.Guest{}, "id = ?", id).Error; err != nil {
+		return &ReturnError{
+			Code: 500,
+			Error: err,
+		}
+	}
+	return  nil
 }

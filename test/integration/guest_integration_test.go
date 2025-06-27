@@ -55,3 +55,22 @@ func TestFindAllGuests(t *testing.T) {
 	firstGuest.Value("email").String().IsEqual(email)
 	firstGuest.Value("phone").String().IsEqual(phone)
 }
+
+func UpdateGuest(t *testing.T) {
+	url := "/update/" + idGuestInFindAllGuests
+	e := newExpect(t)
+	e.PUT(url).
+	WithJSON(map[string]interface{}{
+		"email": "batman1@gmail.com",
+	}).
+	Expect(). 
+	Status(200)
+}
+
+func DeleteGuest(t *testing.T) {
+	url := "/delete/" + idGuestInFindAllGuests
+	e := newExpect(t)
+	e.DELETE(url).
+	Expect(). 
+	Status(200)
+}

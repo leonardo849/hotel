@@ -79,3 +79,24 @@ func (g *GuestService) UpdateGuest(id string, input dto.UpdateGuestDTO) (status 
 	return 200, "guest was updated"
 
 }
+
+func (g *GuestService) DeleteGuest(id string) (status int, message string) {
+	_, err := uuid.Parse(id)
+	if err != nil {
+		logger.ZapLogger.Error(
+			"bad request uuid is invalid",
+			zap.Error(err),
+			zap.String("function", "update guest"),
+		)
+		return 400, "uuid is invalid"
+	}
+	res := g.guestRepository.DeleteGuest(id)
+	if res != nil {
+		if res.Code == 404 {
+			return 404, "guest wasn't found"
+		} else if res.Code == 500 {
+			return 500, "internal server error"
+		}
+	}
+	return 200, "guest was deleted"
+}

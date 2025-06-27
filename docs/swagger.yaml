@@ -151,6 +151,30 @@ paths:
             $ref: '#/definitions/handler.errorResponse'
       tags:
       - guests
+  /guest/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete guest
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/handler.messageResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      tags:
+      - guests
   /guest/update/{id}:
     put:
       consumes:
@@ -167,6 +191,10 @@ paths:
             type: array
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/handler.errorResponse'
       tags:

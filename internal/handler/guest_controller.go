@@ -67,6 +67,7 @@ func (g *GuestController) FindAllGuests() fiber.Handler {
 // @Produce json
 // @Success 200 {array} messageResponse
 // @Failure 400 {object} errorResponse
+// @Failure 404 {object} errorResponse
 // @Router /guest/update/{id} [put]
 func (g *GuestController) UpdateGuest() fiber.Handler {
 	return  func(ctx *fiber.Ctx) error {
@@ -76,6 +77,25 @@ func (g *GuestController) UpdateGuest() fiber.Handler {
 			return  ctx.Status(400).JSON(fiber.Map{"error": err.Error()})
 		}
 		status, message := g.guestService.UpdateGuest(id, input)
+		var property string
+		helper.SetProperty(&property, status)
+		return  ctx.Status(status).JSON(fiber.Map{property:message})
+	}
+}
+
+// DeleteGuests godoc
+// @Description delete guest
+// @Tags guests
+// @Accept json
+// @Produce json
+// @Success 200 {array} messageResponse
+// @Failure 400 {object} errorResponse
+// @Failure 404 {object} errorResponse
+// @Router /guest/delete/{id} [delete]
+func (g *GuestController) DeleteGuest() fiber.Handler {
+	return  func(ctx *fiber.Ctx) error {
+		id := ctx.Params("id")
+		status, message := g.guestService.DeleteGuest(id)
 		var property string
 		helper.SetProperty(&property, status)
 		return  ctx.Status(status).JSON(fiber.Map{property:message})
