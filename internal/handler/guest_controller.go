@@ -59,6 +59,15 @@ func (g *GuestController) FindAllGuests() fiber.Handler {
 	}
 }
 
+
+// UpdatGuests godoc
+// @Description update guest
+// @Tags guests
+// @Accept json
+// @Produce json
+// @Success 200 {array} messageResponse
+// @Failure 400 {object} errorResponse
+// @Router /guest/update/{id} [put]
 func (g *GuestController) UpdateGuest() fiber.Handler {
 	return  func(ctx *fiber.Ctx) error {
 		id := ctx.Params("id")

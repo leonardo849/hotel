@@ -151,6 +151,26 @@ paths:
             $ref: '#/definitions/handler.errorResponse'
       tags:
       - guests
+  /guest/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: update guest
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/handler.messageResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      tags:
+      - guests
   /room/{id}:
     get:
       consumes:
