@@ -6,16 +6,15 @@ import (
 	"hotel/internal/model"
 
 	"github.com/thoas/go-funk"
-	"gorm.io/gorm"
 )
 
 type RoomRepository struct {
-	roomModel *gorm.DB
+	
 }
 
-func NewRoomRepository(roomModel *gorm.DB) *RoomRepository {
+func NewRoomRepository() *RoomRepository {
 	return &RoomRepository{
-		roomModel: roomModel,
+		
 	}
 }
 
@@ -25,14 +24,14 @@ func (r *RoomRepository) CreateRoom(input dto.CreateRoomDTO) error {
 		Type:          input.Type,
 		PricePerNight: input.PricePerNight,
 	}
-	return r.roomModel.Create(&room).Error
+	return DB.Create(&room).Error
 }
 
 func (r *RoomRepository) FindAllRooms() ([]dto.FindRoomDTO, error) {
 	var rooms []model.Room
 	var mapped []dto.FindRoomDTO
 
-	if err := r.roomModel.Find(&rooms).Preload("Reservations").Error; err != nil {
+	if err := DB.Find(&rooms).Preload("Reservations").Error; err != nil {
 		return nil, err
 	}
 
@@ -63,7 +62,7 @@ func (r *RoomRepository) FindAllRooms() ([]dto.FindRoomDTO, error) {
 
 func (r *RoomRepository) FindOneRoom(id string) (*dto.FindRoomDTO, error) {
 	var room model.Room
-	if err := r.roomModel.First(&room, "id = ?", id).Preload("Reservations").Preload("Reservations.Guest").Error; err != nil {
+	if err := DB.First(&room, "id = ?", id).Preload("Reservations").Preload("Reservations.Guest").Error; err != nil {
 		return nil, fmt.Errorf("room wasn't found")
 	}
 
@@ -100,16 +99,20 @@ func (r *RoomRepository) FindOneRoom(id string) (*dto.FindRoomDTO, error) {
 
 func (r *RoomRepository) UpdateRoom(id string, input dto.UpdateRoomDTO) error {
 	fields := make(map[string]interface{})
+	_, err := r.FindOneRoom(id)
+	if err != nil {
+		return  err
+	}
 	if input.Number != nil {
-		fields["Number"] = input.Number
+		fields["Number"] = *input.Number
 	}
 	if input.PricePerNight != nil {
-		fields["PricePerNight"] = input.PricePerNight
+		fields["PricePerNight"] = *input.PricePerNight
 	}
 	if input.Type != nil {
-		fields["Type"] = input.Type
+		fields["Type"] = *input.Type
 	}
-	if err := r.roomModel.Where("id = ?", id).Updates(fields).Error; err != nil {
+	if err := DB.Where("id = ?", id).Updates(fields).Error; err != nil {
 		return err
 	}
 
@@ -117,7 +120,11 @@ func (r *RoomRepository) UpdateRoom(id string, input dto.UpdateRoomDTO) error {
 }
 
 func (r *RoomRepository) DeleteRoom(id string) error {
-	if err := r.roomModel.Delete(id).Error; err != nil {
+	_, err := r.FindOneRoom(id)
+	if err != nil {
+		return  err
+	}
+	if err := DB.Delete(id).Error; err != nil {
 		return err
 	}
 	return nil

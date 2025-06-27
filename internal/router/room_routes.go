@@ -3,7 +3,6 @@ package router
 import (
 	"hotel/internal/handler"
 	"hotel/internal/logger"
-	"hotel/internal/model"
 	"hotel/internal/repository"
 	"hotel/internal/service"
 
@@ -11,7 +10,7 @@ import (
 )
 
 func setupRoomRoutes(roomRoutes fiber.Router) {
-	roomRepo := repository.NewRoomRepository(repository.DB.Model(&model.Room{}))
+	roomRepo := repository.NewRoomRepository()
 	roomService := service.NewRoomService(roomRepo)
 	roomController := handler.NewRoomController(roomService)
 	roomRoutes.Post("/create", roomController.CreateRoom())

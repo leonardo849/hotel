@@ -8,13 +8,19 @@ import (
 	"gorm.io/gorm"
 )
 
+
+type ReturnError struct {
+	Code int 
+	Error error
+}
+
 type GuestRepository struct {
-	guestModel *gorm.DB
+	
 }
 
 func NewGuestRepository(guestModel *gorm.DB) *GuestRepository {
 	return &GuestRepository{
-		guestModel: guestModel,
+		
 	}
 }
 
@@ -24,7 +30,7 @@ func (g *GuestRepository) CreateGuest(input dto.CreateGuestDTO) error {
 		Email: input.Email,
 		Phone: input.Phone,
 	}
-	if err := g.guestModel.Create(&guest).Error; err != nil {
+	if err := DB.Create(&guest).Error; err != nil {
 		return err
 	}
 	return nil
@@ -32,7 +38,7 @@ func (g *GuestRepository) CreateGuest(input dto.CreateGuestDTO) error {
 
 func (g *GuestRepository) FindAllGuests() ([]dto.FindGuestDTO, error) {
 	var guests []model.Guest
-	if err := g.guestModel.Find(&guests).Preload("Reservations").Error; err != nil {
+	if err := DB.Find(&guests).Preload("Reservations").Error; err != nil {
 		return nil, err
 	}
 	mapped := funk.Map(guests, func(guest model.Guest) dto.FindGuestDTO {
@@ -59,4 +65,57 @@ func (g *GuestRepository) FindAllGuests() ([]dto.FindGuestDTO, error) {
 	}).([]dto.FindGuestDTO)
 	return mapped, nil
 
+}
+
+func (g *GuestRepository) FindOneGuest(id string) (*dto.FindGuestDTO, error) {
+	var guest model.Guest
+	if err := DB.First(&guest, "id = ?", id).Preload("Reservations").Error; err != nil {
+		return nil, err
+	}
+	mappedReservations := funk.Map(guest.Reservations, func(reservation model.Reservation) dto.FindReservationDTO {
+		return  dto.FindReservationDTO{
+			ID: reservation.ID,
+			RoomID: reservation.RoomID,
+			GuestID: reservation.GuestID,
+			Guest: nil,
+			CheckIn: reservation.CheckIn,
+			CheckOut: reservation.CheckOut,
+			TotalPrice: reservation.TotalPrice,
+		}
+	}).([]dto.FindReservationDTO)
+	guestDTO := dto.FindGuestDTO{
+		ID: guest.ID,
+		Name: guest.Name,
+		Email: guest.Email,
+		Phone: guest.Phone,
+		Reservations: mappedReservations,
+	}
+	return  &guestDTO, nil
+}
+
+func (g *GuestRepository) UpdateGuest(id string, input dto.UpdateGuestDTO) *ReturnError {
+	_, err := g.FindOneGuest(id)
+	if err != nil {
+		return &ReturnError{
+			Code: 404,
+			Error: err,
+		}
+	}
+	fields := make(map[string]interface{})
+	if input.Email != nil {
+		fields["Email"] = *input.Email
+	}
+	if input.Name != nil {
+		fields["Name"] = *input.Name
+	}
+	if input.Phone != nil {
+		fields["Phone"] = *input.Phone
+	}
+	if err := DB.Model(&model.Guest{}).Where("id = ?", id).Updates(&fields).Error; err != nil {
+		return &ReturnError{
+			Code: 500,
+			Error: err,
+		}
+	}
+	return nil
 }

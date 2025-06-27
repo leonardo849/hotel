@@ -6,6 +6,7 @@ import (
 	"hotel/internal/repository"
 	"hotel/internal/validator"
 
+	"github.com/google/uuid"
 	"go.uber.org/zap"
 )
 
@@ -51,4 +52,30 @@ func (g *GuestService) FindAllGuests() (status int, message interface{}) {
 		return 500, err.Error()
 	}
 	return 200, guests
+}
+
+func (g *GuestService) UpdateGuest(id string, input dto.UpdateGuestDTO) (status int, message string) {
+	_, err := uuid.Parse(id)
+	if err != nil {
+		logger.ZapLogger.Error(
+			"bad request uuid is invalid",
+			zap.Error(err),
+			zap.String("function", "update guest"),
+		)
+		return 400, "uuid is invalid"
+	}
+	if err := validator.Validate.Struct(input); err != nil {
+		return 400, err.Error()
+	}
+	res := g.guestRepository.UpdateGuest(id, input)
+	if res != nil {
+		if res.Code == 404 {
+			return 404, "guest wasn't found"
+		} else if res.Code == 500 {
+			return 500, "internal server error"
+		}
+	}
+
+	return 200, "guest was updated"
+
 }

@@ -122,7 +122,7 @@ func (r *RoomController) UpdateRoom() fiber.Handler {
 		status, message := r.roomService.UpdateRoom(id, input)
 		var property string
 		helper.SetProperty(&property, status)
-		return  ctx.Status(status).JSON(message)
+		return  ctx.Status(status).JSON(fiber.Map{property:message})
 
 	}
 }

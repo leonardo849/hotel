@@ -11,10 +11,12 @@ import (
 )
 
 func setupGuestRoutes(guestRoutes fiber.Router) {
-	guestRepository  := repository.NewGuestRepository(repository.DB.Model(&model.Guest{}))
+	modelGuest := repository.DB.Model(&model.Guest{})
+	guestRepository  := repository.NewGuestRepository(modelGuest)
 	guestService := service.NewGuestService(guestRepository)
 	guestController := handler.NewGuestController(guestService)
 	guestRoutes.Post("/create", guestController.CreateGuest())
 	guestRoutes.Get("/all", guestController.FindAllGuests())
+	guestRoutes.Put("/update/:id", guestController.UpdateGuest())
 	logger.ZapLogger.Info("guest's routes are running!")
 }

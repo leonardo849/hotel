@@ -30,3 +30,9 @@ type CreateGuestDTO struct {
 	Email string `json:"email" validate:"required,email"`
 	Phone string `json:"phone" validate:"required,phone_number"`
 }
+
+type UpdateGuestDTO struct {
+	Name  *string `json:"name" validate:"omitempty,min=10,max=200"`
+	Email *string `json:"email" validate:"omitempty,email"`
+	Phone *string `json:"phone" validate:"omitempty,phone_number"`
+}

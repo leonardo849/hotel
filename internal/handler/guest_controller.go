@@ -58,3 +58,17 @@ func (g *GuestController) FindAllGuests() fiber.Handler {
 		return  ctx.Status(status).JSON(message)
 	}
 }
+
+func (g *GuestController) UpdateGuest() fiber.Handler {
+	return  func(ctx *fiber.Ctx) error {
+		id := ctx.Params("id")
+		var input dto.UpdateGuestDTO
+		if err := ctx.BodyParser(&input); err != nil {
+			return  ctx.Status(400).JSON(fiber.Map{"error": err.Error()})
+		}
+		status, message := g.guestService.UpdateGuest(id, input)
+		var property string
+		helper.SetProperty(&property, status)
+		return  ctx.Status(status).JSON(fiber.Map{property:message})
+	}
+}
