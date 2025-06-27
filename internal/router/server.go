@@ -20,6 +20,8 @@ func SetupApp() *fiber.App {
 	app.Use(middleware.LogRequestsMiddleware())
 	roomGroup := app.Group("/room")
 	guestGroup := app.Group("/guest")
+	reservationGroup := app.Group("/reservation")
+	setupReservationRoutes(reservationGroup)
 	setupRoomRoutes(roomGroup)
 	setupGuestRoutes(guestGroup)
 	logger.ZapLogger.Info("app is ready!")
